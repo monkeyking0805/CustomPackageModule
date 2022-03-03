@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+
+    <container name="root">                   
+        <block class="Oneclout\Custompackage\Block\Collection" template="Oneclout_Custompackage::step2.phtml" cacheable="false" name="step2.ajax" as="step2_ajax">
+
+        </block>  
+    </container>      
+</page>

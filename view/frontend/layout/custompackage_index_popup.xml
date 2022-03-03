@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+
+    <container name="root">                   
+        <block class="Oneclout\Custompackage\Block\Collection" template="Oneclout_Custompackage::associateproduct.phtml" cacheable="false" name="popup.ajax" as="popup_ajax">
+
+        </block>  
+    </container>      
+</page>

@@ -1,0 +1,32 @@
+<?php 
+	$categoryId =$block->getCategoryId(); 
+	$Parentcategory = $block->getCategory($categoryId);
+	$subcat=$Parentcategory->getChildrenCategories();
+?>
+<h1 class="title">Select Model</h1>
+<div class="brand_container">	
+	<?php foreach ($subcat as $value): ?>
+		<?php 
+			$subId=$value['entity_id'];
+			$_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+			$category = $_objectManager->create('Magento\Catalog\Model\Category')
+			->load($subId);
+			
+	 	?>
+	 	<?php if ($category['attribute_id']) : ?>
+	 		<div class="brand_container_img item model" id="<?php echo $value['entity_id'];?>" modelname="<?php echo $category->getName()?>" >
+				<div class="selected-icon">✔</div>
+				<?php 
+					$_outputhelper    = $this->helper('Magento\Catalog\Helper\Output');
+			    	$_imgHtml   = '';
+				    if ($_imgUrl = $category->getImageUrl()) {
+				        $_imgHtml = '<img src="' . $_imgUrl . '" />';
+				        $_imgHtml = $_outputhelper->categoryAttribute($category, $_imgHtml, 'image');
+				        /* @escapeNotVerified */ echo $_imgHtml;
+				    }
+				?>
+				<div class="brand_title"><?php echo $category->getName()?></div>
+			</div>
+		<?php endif; ?>
+	<?php endforeach; ?>
+</div>

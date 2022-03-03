@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="Magento\Checkout\Block\Cart\Item\Renderer\Actions\Remove" type="Oneclout\Custompackage\Rewrite\Magento\Checkout\Block\Cart\Item\Renderer\Actions\Remove"/>
+    <preference for="Magento\Checkout\Block\Cart\Item\Renderer\Actions\Edit" type="Oneclout\Custompackage\Rewrite\Magento\Checkout\Block\Cart\Item\Renderer\Actions\Edit"/>
+    <preference for="Magento\Checkout\Controller\Cart\Delete" type="Oneclout\Custompackage\Rewrite\Magento\Checkout\Controller\Cart\Delete"/>
+</config>

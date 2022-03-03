@@ -1,0 +1,130 @@
+<?php 
+	$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $variable = $objectManager->create('Magento\Variable\Model\Variable');
+    $values = $variable->loadByCode('custom_package_accessories')->getPlainValue();
+    $obj = json_decode( $values );
+    $discount = $obj->discount;
+	$count = 1;
+	$productcount = 1;
+
+	$collection = $block->getProductCollection();
+
+	// if ( ! empty( $obj->free_mount_product_id ) ) {
+	// 	$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+	// 	$free_product = $objectManager->get('Magento\Catalog\Model\Product')->load($obj->free_mount_product_id);
+	// 	array_unshift( $collection, $free_product );
+	// }
+?>
+
+<h1 class="title">Select Mount</h1>
+<?php if (empty($collection)) : ?>
+	<p class="notification">Currently there are no items IN STOCK for this model. Our package builder is made to use only IN STOCK items. Please check back later, as items are arriving daily! To find out when these items will be back in stock, call our customer service line at 1-855-236-5000.</p>
+<?php else : ?>
+	<?php foreach ($collection as $_product): ?>
+
+		<?php $pageNo=$block->getPageNo()-1;
+			$product=$pageNo*24;
+		?>
+		<?php if ($productcount>$product) : ?>
+			<?php if ($_product->getTypeId() == 'configurable') : ?>
+				<?php 
+					$_childProducts = $_product->getTypeInstance()->getUsedProducts($_product);
+					$prices = array();
+				?>
+				<?php foreach ($_childProducts as $simpleProduct): ?>
+					<?php $prices[] = $simpleProduct->getFinalPrice();
+				?>
+				<?php endforeach; ?> 
+				<?php $price=(min($prices));?>
+				<div class="product item mount configurable-product" data-toggle="modal" data-target="#myModal" parentId="<?php echo $_product->getId(); ?>">
+					<div class="selected-container">
+						<div class="selected-icon">✔</div>
+					</div>
+					<?php 
+						$imageBlock = $block->getLayout()->createBlock('Magento\Catalog\Block\Product\ListProduct');
+						$productImage = $imageBlock->getImage($_product, 'category_page_grid'); 
+						echo $productImage->toHtml(); 
+					?>
+					<div class="details-area">
+						<p style="display: none;" class="id"><?php echo $_product->getId();?>
+						</p>
+						<div class="product-name"><?php echo $_product->getName().'<br>';?></div>
+					<div class="product-sku" style="display: none;"><?php echo $_product->getSku().'<br>';?></div>
+						<div class="price">
+
+								<span id="productprice"><?php echo '$'.number_format($price, 2, '.', ',');?></span>
+								<?php 
+									$price=$price-($price*($discount/100));
+										$price=round($price,2);
+								?>
+								<span class="packgae-discount" price="<?php echo $price;?>"><?php echo '$'.$price;?></span>
+						</div> 
+					</div>
+				</div>
+			<?php else: ?>
+				<div class="product item mount">
+					<div class="selected-container">
+							<div class="selected-icon">✔</div>
+					</div>
+					<?php 
+						$imageBlock = $block->getLayout()->createBlock('Magento\Catalog\Block\Product\ListProduct');
+						$productImage = $imageBlock->getImage($_product, 'category_page_grid'); 
+						echo $productImage->toHtml(); 
+					?>
+					<div class="details-area">
+						<p style="display: none;" class="id"><?php echo $_product->getId();?>
+						</p>
+						<div class="product-name"><?php echo $_product->getName().'<br>';?></div>
+					<div class="product-sku" style="display: none;"><?php echo $_product->getSku().'<br>';?></div>
+						<div class="price">
+							<?php if ($_product->getSpecialPrice()>0) : ?>
+								<span class="orignal-price"><strike>
+									<?php echo '$'.number_format($_product->getPrice(),  2, '.', ',');?>
+								</strike></span>
+								<span><?php echo '$'.number_format($_product->getSpecialPrice(), 2, '.', ',');?></span>
+								<?php 
+									$price=$_product->getSpecialPrice()-($_product->getSpecialPrice()*($discount/100));
+										$price=number_format($price,2, '.', ',');
+								?>
+								<span class="packgae-discount" price="<?php echo $price;?>">
+									<?php 
+										echo '$'.$price;
+									?>	
+								</span>
+							<?php else: ?>
+								<span><?php echo '$'.number_format($_product->getPrice(), 2, '.', ',');?></span>
+								<?php 
+									$price=$_product->getPrice()-($_product->getPrice()*($discount/100));
+										$price=round($price,2);
+								?>
+								<span class="packgae-discount" price="<?php echo $price;?>"><?php echo '$'.$price;?></span>
+							<?php endif; ?> 
+						</div> 
+					</div>
+				</div>
+			<?php endif; ?>
+			<?php 
+				$count++;
+				if($count>24){
+					break;
+				}		
+			?>	
+		<?php endif; ?>
+		<?php $productcount++;?>
+	<?php endforeach; ?> 
+	<?php if($block->getPages()>1): ?>
+		<?php $lenth=$block->getPages()?>
+		<div class="custom-pagination">
+			<?php if ($block->getPageNo()>1) : ?>
+				<span class="page" id="<?php echo $block->getPageNo()-1?>"><</span>
+			<?php endif; ?>		
+			<?php for ($i=1;$i<=$lenth;$i++) { ?>
+				<span class="page" id="<?php echo $i?>"><?php echo $i?></span>
+			<?php } ?>
+			<?php if ($block->getPageNo()<$block->getPages()) : ?>
+				<span class="page"  id="<?php echo $block->getPageNo()+1?>">></span>
+			<?php endif; ?>	
+		</div> 
+	<?php endif; ?> 
+<?php endif; ?> 
+   

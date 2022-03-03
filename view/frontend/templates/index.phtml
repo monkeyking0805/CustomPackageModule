@@ -1,0 +1,553 @@
+<?php
+	$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $variable = $objectManager->create('Magento\Variable\Model\Variable');
+    $values = $variable->loadByCode('custom_package_accessories')->getPlainValue();
+    $obj=(json_decode($values));
+    $mount_id=$obj->mounts_cat_id;
+    $scope_id=$obj->scopes_cat_id;
+	$case_id=$obj->case_cat_id; 
+	$sling_id=$obj->sling_cat_id; 
+    $brandParent_id=$obj->brand_cat_id;
+    $Parentcategory = $block->getCategory($brandParent_id);
+	$subcat=$Parentcategory->getChildrenCategories();
+?>
+
+<ol class="brands-nav nav">
+	<li class="brands-nav-li">
+		<button class="step1" value="btnstep1">Select Brand</button>
+	</li>
+	<li class="brands-nav-li">
+		<button class="step2" value="btnstep2" disabled>Select Model</button>
+		
+	</li>
+	<li class="brands-nav-li">
+		<button class="step3"  value="btnstep3" disabled>Select Rifle</button>
+		
+	</li>
+	<li class="brands-nav-li">
+		<button class="step4"  value="btnstep4"  disabled>Mounts &amp; Sights</button>
+	</li>
+	<li class="brands-nav-li" >
+		<button class="step5" value="btnstep5" disabled>Select Scope</button>
+	</li>
+	<li class="brands-nav-li">
+		<button class="step6"  value="btnstep6" disabled>Select Case</button>
+	</li>
+	<li class="brands-nav-li">
+		<button class="step7"  value="btnstep7" disabled>Select Sling</button>
+	</li>
+	<li class="brands-nav-li">
+		<button class="step8"  disabled>Overview</button>
+	</li>
+</ol>
+<div class="row custompackage_3-1-layout">
+	<div class="col-sm-8 col-xs-12 step-container">
+		<!-- <div class="buttons-nex-prev-container">
+			<button class="Pervious-button" disabled><i class="fa fa-chevron-left"></i>Previous</button>
+			<button class="next-button " id="btnstep1" disabled>Next <i class="fa fa-chevron-right"></i></button>
+		</div> -->
+		<div class="content-container">
+			<div class="package-continer" value="<?php echo $block->getBaseUrl().'custompackage/step2/step2';?>" id="step1">
+				<h1 class="title">Select Brand</h1>
+				<div class="brand_container">
+
+					<?php foreach ($subcat as $value): ?>
+						<?php 
+							$subId=$value['entity_id'];
+							$_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+							$category = $_objectManager->create('Magento\Catalog\Model\Category')
+							->load($subId);
+					 	?>
+					 	<?php if ($category['attribute_id']) : ?>
+
+					 		<div class="brand_container_img item brand" id="<?php echo $value['entity_id'];?>" >
+								<div class="selected-icon">✔</div>
+								<?php 
+									$_outputhelper    = $this->helper('Magento\Catalog\Helper\Output');
+							    	$_imgHtml   = '';
+								    if ($_imgUrl = $category->getImageUrl()) {
+								        $_imgHtml = '<img src="' . $_imgUrl . '" />';
+								        $_imgHtml = $_outputhelper->categoryAttribute($category, $_imgHtml, 'image');
+								        /* @escapeNotVerified */ echo $_imgHtml;
+								    }
+								?>
+								<div class="brand_title"><?php echo $category->getName()?></div>
+							</div>	
+						<?php endif; ?>
+					<?php endforeach; ?>
+				</div>
+			</div>
+			<div class="package-continer" id="step2" value="<?php echo $block->getBaseUrl().'custompackage/step3/step3';?>">				
+			</div>
+			<div class="package-continer" id="step3"  value="<?php echo $block->getBaseUrl().'custompackage/step4/step4';?>" >				
+			</div>
+			<div class="package-continer" id="step4"  value="<?php echo $block->getBaseUrl().'custompackage/step5/step5';?>" categoryid="<?php echo $mount_id?>">
+			</div>
+			<div class="package-continer" id="step5"  value="<?php echo $block->getBaseUrl().'custompackage/step6/step6';?>" categoryid="<?php echo $scope_id ?>">
+			</div>
+			<div class="package-continer" id="step6"  value="<?php echo $block->getBaseUrl().'custompackage/step7/step7';?>" categoryid="<?php echo $case_id ?>">
+			</div>
+			<div class="package-continer" id="step7"  value="<?php echo $block->getBaseUrl().'custompackage/step7/step7';?>" categoryid="<?php echo $sling_id ?>">
+			</div>
+			<div class="step8 review-package package-continer" id="step8">
+				<div class="special-note">
+					<p>Please review your package components for accuracy. Our team will review your order before building and call with any questions.</p>
+				</div>
+				<div class="package-overview">
+					<div class="header">
+						<div class="product-img"><p>PRODUCT IMAGE</p></div>
+						<div class="product-name"><p>PRODUCT NAME</p></div>
+						<div class="product-sku "><p>SKU</p></div>
+						<div class="product-price"><p>UNIT PRICE</p></div>
+				    </div>
+					<div id="rifles" class="Overview custom-rifles"></div>
+					<div id="mount" class="Overview custom-mount" ></div>
+					<div id="scope" class="Overview custom-scope"></div>
+					<div id="case" class="Overview custom-case"></div>
+					<div id="sling" class="Overview custom-sling"></div>
+					<div id="subtotal">
+						<span class="subtotal">Subtotal</span><span class="amount"></span>
+					</div>
+
+					<div class="overview-action">
+						<button id="close">Close</button>
+						<button id="addtocart">Add to Cart</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="confirmation-message">
+			Your custom package is being added to your shopping cart. You will be redirected in 5 seconds. Please review your package components for accuracy. Our team will review your order before building and call with any questions.
+		</div>
+		<div class="buttons-nex-prev-container">
+			<button class="Pervious-button"  disabled> <i class="fa fa-chevron-left"></i>Previous</button>
+			<button class="next-button" id="btnstep1" disabled>Next <i class="fa fa-chevron-right"></i></button>
+		</div>
+	</div>
+	<div class="col-sm-4 col-xs-12 cart-container">
+		<div class="inner-cart-container">
+			<div class="pack-note">
+				<span class="shopping-cart"><i class="fa fa-shopping-cart" style="color: black"></i></span>
+<!-- 				<span class="item-count">0</span> -->
+				<span class="label">PACKAGE ITEMS</span>
+			</div>
+			<div class="customcart active">
+					<p class="no-item">There are no items in the cart</p>
+					<div  class="Overview custom-rifles"></div>
+					<div  class="Overview custom-mount" ></div>
+					<div  class="Overview custom-scope"></div>
+					<div  class="Overview custom-case"></div>
+					<div  class="Overview custom-sling"></div>
+			</div>
+		</div>
+		
+		<div class="buttons-nex-prev-container">
+			<button class="Pervious-button"  disabled> <i class="fa fa-chevron-left"></i>Previous</button>
+			<button class="next-button" id="btnstep1" disabled>Next <i class="fa fa-chevron-right"></i></button>
+		</div>
+
+	</div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Select Product</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button class="close " data-dismiss="modal" id="confirm-child">ok</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+ <script type="text/javascript">
+    require(["jquery","domReady!"], function ($) {
+    	//model selection
+    	$(document).on('click','#btnstep1',function() { 
+    		$(".Pervious-button").attr("id",1);
+    		$(".step2").removeAttr("disabled");
+    		var categoryId1=$(".brand.active").attr("id");
+    		var url=$("#step1").attr("value");
+            $.ajax({
+                showLoader: true,
+                url: url,
+                data: { categoryId:categoryId1},
+                method: "POST"
+            }).done(function (data) {
+            	$(".next-button").prop("disabled", true);
+            	$('#step1').hide();
+            	$('#step2').empty();
+	            $('#step2').append(data);
+	            $('#step2').show();
+	            $(".next-button").attr("id","btnstep2");
+	            $(".Pervious-button").removeAttr("disabled");
+            });   
+        }); 
+        //rifles selection
+        $(document).on('click','#btnstep2',function() { 
+        	$(".Pervious-button").attr("id",2);
+        	$(".step3").removeAttr("disabled");
+    		var categoryId1=$(".model.active").attr("id");
+    		var url=$("#step2").attr("value");
+    		$(".limiter").show()
+    		var pageno1=1;
+            $.ajax({
+                showLoader: true,
+                url: url,
+                data: { categoryId:categoryId1,pageno:pageno1},
+                method: "POST"
+            }).done(function (data) {
+            	$(".next-button").prop("disabled", true);
+	            $('#step2').hide(data);
+	            $('#step3').empty();
+	            $('#step3').append(data);
+	            $('#step3').show();
+	            $(".next-button").attr("id","btnstep3");
+            });   
+        }); 
+        //mount selection
+        $(document).on('click','#btnstep3',function() { 
+         	$(".Pervious-button").attr("id",3);
+         	$(".step4").removeAttr("disabled");
+         	var rifles=$(".rifles.active").html();
+            $(".custom-rifles").html(rifles)
+    		var categoryId1="<?php echo $mount_id?>";
+    		var url=$("#step3").attr("value");
+    		$( ".item-count" ).html(1);
+    		var pageno1=1;
+    		var modelName=$(".model.active").attr("modelname");
+            $.ajax({
+                showLoader: true,
+                url: url,
+                data: { categoryId:categoryId1,pageno:pageno1,model:modelName},
+                method: "POST"
+            }).done(function (data) {
+            	$(".next-button").prop("disabled", true);
+	            $('#step3').hide(data);
+	            $('#step4').empty();
+	            $('#step4').append(data);
+	            $('#step4').show();
+	            $(".next-button").attr("id","btnstep4");
+	            $(".no-item").hide();
+            });   
+        }); 
+        $(document).on('click','#btnstep4',function() { 
+         	$(".Pervious-button").attr("id",4);
+         	$(".item-count").html(2);
+         	$(".step5").removeAttr("disabled");
+         	var mount=$(".mount.active").html();
+            $(".custom-mount").html(mount)
+    		var categoryId1="<?php echo $scope_id?>";
+    		var url=$("#step4").attr("value");
+    		var pageno1=1;
+    		var modelName=$(".model.active").attr("modelname");
+            $.ajax({
+                showLoader: true,
+                url: url,
+                data: {categoryId:categoryId1, pageno:pageno1, model:modelName},
+                method: "POST"
+            }).done(function (data) {
+            	$(".next-button").prop("disabled", true);
+	            $('#step4').hide(data);
+	            $('#step5').empty();
+	            $('#step5').append(data);
+	            $('#step5').show();
+	            $(".next-button").attr("id","btnstep5");
+            });   
+        }); 
+        $(document).on('click','#btnstep5',function() { 
+         	$(".Pervious-button").attr("id",5);
+         	$( ".item-count" ).html(3);
+         	$(".step6").removeAttr("disabled");
+         	var rifles=$(".scope.active").html();
+            $(".custom-scope").html(rifles)
+    		var categoryId1="<?php echo $case_id?>";
+    		var url=$("#step5").attr("value");
+    		var pageno1=1;
+    		var modelName=$(".model.active").attr("modelname");
+            $.ajax({
+                showLoader: true,
+                url: url,
+                data: { categoryId:categoryId1,pageno:pageno1,model:modelName},
+                method: "POST"
+            }).done(function (data) {
+            	$(".next-button").prop("disabled", true);
+	            $('#step5').hide(data);
+	            $('#step6').empty();
+	            $('#step6').append(data);
+	            $('#step6').show();
+	            $(".next-button").attr("id","btnstep6");
+            });   
+		});		
+        $(document).on('click','#btnstep6',function() { 
+         	$(".Pervious-button").attr("id", 6);
+         	$(".item-count").html(3);
+         	$(".step7").removeAttr("disabled");
+         	var cases=$(".case.active").html();
+            $(".custom-case").html(cases)
+    		var categoryId1="<?php echo $sling_id?>";
+    		var url=$("#step6").attr("value");
+    		var pageno1=1;
+    		var modelName=$(".model.active").attr("modelname");
+            $.ajax({
+                showLoader: true,
+                url: url,
+                data: { categoryId:categoryId1,pageno:pageno1,model:modelName},
+                method: "POST"
+            }).done(function (data) {
+            	$(".next-button").prop("disabled", true);
+	            $('#step6').hide(data);
+	            $('#step7').empty();
+	            $('#step7').append(data);
+	            $('#step7').show();
+	            $(".next-button").attr("id","btnstep7");
+            });   
+        }); 
+        $(document).on('click','#btnstep7',function() { 
+         	var slings=$(".sling.active").html();
+            $(".custom-sling").html(slings);
+         	var riflesprice=$("#rifles").find(".packgae-discount").attr("price");
+			var mountprice=$("#mount").find(".packgae-discount").attr("price");
+			var scopeprice=$("#scope").find(".packgae-discount").attr("price");
+			var caseprice=$("#case").find(".packgae-discount").attr("price");
+			var slingprice=$("#sling").find(".packgae-discount").attr("price");
+         	var subtotal=parseFloat(riflesprice)+parseFloat(mountprice)+parseFloat(scopeprice)+parseFloat(caseprice)+parseFloat(slingprice);
+         	subtotal=subtotal.toFixed(2);
+			$(".amount").html('$'+subtotal);
+         	$(".Pervious-button").attr("id", 7);
+         	$(".item-count").html(4);
+         	$(".step8").removeAttr("disabled");
+            $('#step7').hide();
+            $('#step8').show();
+            $(".next-button").prop("disabled", true);
+        }); 
+        $(document).on('click','#addtocart',function() { 
+		 	var riflesid=$("#rifles").find(".id").text(); 
+			var mountid=$("#mount").find(".id").text(); 
+			var scopeid=$("#scope").find(".id").text(); 
+			var caseid=$("#case").find(".id").text();
+			var slingid=$("#sling").find(".id").text();
+			var riflesprice=$("#rifles").find(".packgae-discount").attr("price");
+			var mountprice=$("#mount").find(".packgae-discount").attr("price");
+			var scopeprice=$("#scope").find(".packgae-discount").attr("price");
+			var caseprice=$("#case").find(".packgae-discount").attr("price");
+			var slingprice=$("#sling").find(".packgae-discount").attr("price");
+			
+			var url="<?php echo $block->getBaseUrl().'custompackage/step7/step7';?>";
+		    $.ajax({
+		        showLoader: true,
+		        url: url,
+		        data:{ productId:riflesid,price:riflesprice},
+		        method: "POST"
+		    }).done(function (data) {
+		    	$.ajax({
+					showLoader: true,
+					url: url,
+					data:{ productId:mountid,price:mountprice},
+					method: "POST"
+				}).done(function (data) {
+					$('#step7').hide();
+					$(".confirmation-message").show();
+					// $([document.documentElement, document.body]).animate({
+					// 	scrollTop: $(".brands-nav.nav").offset().top
+					// }, 2000);
+					$.ajax({
+						showLoader: false,
+						url: url,
+						data:{ productId:scopeid,price:scopeprice},
+						method: "POST"
+					}).done(function (data) {
+			        	$.ajax({
+							showLoader: false,
+							url: url,
+							data:{ productId:caseid,price:caseprice},
+							method: "POST"
+					    }).done(function (data) {
+							$.ajax({
+								showLoader: false,
+								url: url,
+								data:{ productId:slingid,price:slingprice},
+								method: "POST"
+							}).done(function (data) {
+								var url="<?php echo $block->getBaseUrl().'checkout/cart/'?>";
+								window.location.replace(url);
+							});
+					    });	
+				    });
+			  	});
+		    }); 	
+		}); 
+	    $(document).on('click','.page',function() { 
+	     	var step=$(".next-button").attr("id");
+         	if (step=="btnstep3") {
+		       var ajaurl="<?php echo $block->getBaseUrl().'custompackage/step3/step3';?>"
+		       var categoryId1=$(".model.active").attr("id");
+		       var stepid="#step3";
+		       var  pageno1=$(this).attr("id");
+	           var limit1=$(".limit").val();
+	            $.ajax({
+	            showLoader: true,
+	            url: ajaurl,
+	            data: { categoryId:categoryId1,limit:limit1,pageno:pageno1},
+	            method: "POST"
+	        	}).done(function (data) {
+	        		$(stepid).empty();
+        			$(stepid).append(data);
+        			$(".page").removeClass("active");
+        			$('#'+pageno1).addClass("active");
+	            });  
+		    }
+		    else{
+		    	if (step=="btnstep4") {
+			        var ajaurl="<?php echo $block->getBaseUrl().'custompackage/step4/step4';?>"
+			        var categoryId1="<?php echo $mount_id?>";
+			        var stepid="#step4";
+			    }
+			    else if (step=="btnstep5") {
+			        var ajaurl="<?php echo $block->getBaseUrl().'custompackage/step5/step5';?>"
+			        var categoryId1="<?php echo $scope_id?>";
+			        var stepid="#step5";
+			    }
+			    else if (step=="btnstep6") {
+			        var ajaurl="<?php echo $block->getBaseUrl().'custompackage/step6/step6';?>"
+			        var categoryId1="<?php echo $case_id?>";
+			        var stepid="#step6";
+			    } else {
+					var ajaurl="<?php echo $block->getBaseUrl().'custompackage/step7/step7';?>"
+			        var categoryId1="<?php echo $sling_id?>";
+			        var stepid="#step7";
+				}
+	            var  pageno1=$(this).attr("id");
+	        	var limit1=$(".limit").val();
+	        	var modelName=$(".model.active").attr("modelname");
+	            $.ajax({
+	            showLoader: true,
+	            url: ajaurl,
+	            data: { categoryId:categoryId1,limit:limit1,pageno:pageno1,model:modelName},
+	            method: "POST"
+	        	}).done(function (data) {
+	        		$(stepid).empty();
+        			$(stepid).append(data);
+	            });   
+		    } 
+	    });
+		$(document).ready(function(){
+			var step=$(".Pervious-button").attr("id");
+            $(".brands-nav-li button").click(function (e) {
+             var text = $(this).attr("class");
+             var nextbuttonid = $(this).attr("value");
+             $('.package-continer').hide();
+             $('#'+text).show();
+             $(".next-button").attr("id",nextbuttonid)
+            });
+        }); 
+        $(document).ready(function(){
+            $("#close").click(function (e) {
+             	var url="<?php echo $block->getBaseUrl().'custompackage'?>";
+            	window.location.replace(url);
+            });
+        });
+        $(".Pervious-button").click(function (e) {
+		   	var perviousdiv=$(this).attr("id");
+			var pervious=perviousdiv-1;
+			$('.package-continer').hide();
+			$('#step'+perviousdiv).show();
+		   	$(this).attr("id",pervious);
+		   	$(".next-button").attr("id",'btnstep'+perviousdiv);
+		});
+        $(document).on('click','.model',function() { 
+        	$(".next-button").removeAttr("disabled");
+			$(".model .selected-icon").hide();
+			$(".model").removeClass("active");
+			$(this).find(".selected-icon").toggle();
+			$(this).addClass("active");
+		});
+		$(document).on('click','.brand',function() { 
+			$(".next-button").removeAttr("disabled");
+			$(".brand .selected-icon").hide();
+			$(".brand").removeClass("active");
+			$(this).find(".selected-icon").toggle();
+			$(this).addClass("active");
+		}); 
+		$(document).on('click','.rifles',function() { 
+			$(".next-button").removeAttr("disabled");
+			$(".rifles .selected-icon").hide();
+			$(".rifles").removeClass("active");
+			$(this).find(".selected-icon").toggle();
+			$(this).addClass("active");
+		}); 
+		$(document).on('click','.mount',function() { 
+			$(".next-button").removeAttr("disabled");
+			$(".mount .selected-icon").hide();
+			$(".mount").removeClass("active");
+			$(this).find(".selected-icon").toggle();
+			$(this).addClass("active");
+		}); 
+		$(document).on('click','.scope',function() { 
+			$(".next-button").removeAttr("disabled");
+			$(".scope .selected-icon").hide();
+			$(".scope").removeClass("active");
+			$(this).find(".selected-icon").toggle();
+			$(this).addClass("active");
+		}); 
+		$(document).on('click','.case',function() { 
+			$(".next-button").removeAttr("disabled");
+			$(".case .selected-icon").hide();
+			$(".case").removeClass("active");
+			$(this).find(".selected-icon").toggle();
+			$(this).addClass("active");
+		}); 
+		$(document).on('click','.sling',function() { 
+			$(".next-button").removeAttr("disabled");
+			$(".sling .selected-icon").hide();
+			$(".sling").removeClass("active");
+			$(this).find(".selected-icon").toggle();
+			$(this).addClass("active");
+		}); 
+		// $(".pack-note").hover(function() {
+		//   	$(".customcart").toggleClass("active")
+		// });
+		$(document).on('click','.configurable-product',function() { 
+			$(".configurable-product").removeClass("Parent");
+			$(this).addClass("Parent");
+			var productId=$(this).attr("parentId"); 
+		    $.ajax({
+		        showLoader: true,
+		        url: "<?php echo $block->getBaseUrl().'custompackage/index/popup';?>",
+		        data: { productId:productId},
+		        method: "POST"
+		    }).done(function (data) {
+		    	$('.modal-body').empty();
+				$('.modal-body').append(data);
+				$('#myModal').fadeIn();
+		    });   
+		});
+		$(document).on('click','.associated-product',function() { 
+			$(".associated-product").removeClass("active");
+			$(this).addClass("active");
+		});	
+		$(document).on('click','#confirm-child',function() {
+			if ( $(".associated-product.active").length >= 1 ) {
+				price=$(".associated-product.active").find(".price").text();
+				packageprice=$(".associated-product.active").find("#dicountprice").text();
+				id=$(".associated-product.active").find("#id").text()
+				sku=$(".associated-product.active").find("#sku").text()
+				//console.log(price,packageprice,id,sku)
+				$(".configurable-product.active.Parent").find(".id").text(id);
+				$(".configurable-product.active.Parent").find(".product-sku").text(sku);
+				$(".configurable-product.active.Parent").find("#productprice").text(price);
+				$(".configurable-product.active.Parent").find(".packgae-discount").attr("price",packageprice);
+				$(".configurable-product.active.Parent").find(".packgae-discount").text('$'+packageprice);
+				$('#myModal').fadeOut();
+			}
+		});	
+    });
+</script> 
